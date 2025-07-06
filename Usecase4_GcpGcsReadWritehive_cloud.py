@@ -1,6 +1,6 @@
 #prerequisites
 # Download the jar from https://storage.googleapis.com/hadoop-lib/gcs/gcs-connector-latest-hadoop2.jar
-#spark-submit --jars /home/hduser/install/gcp/gcs-connector-latest-hadoop2.jar GcpGcsReadWritehivewe39_cloud.py
+#spark-submit --jars /home/hduser/install/gcp/gcs-connector-latest-hadoop2.jar Usecase4_GcpGcsReadWritehive_cloud.py
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
 def main():
@@ -19,23 +19,23 @@ def main():
                               StructField("custlname", StringType(), True),
                               StructField("custage", ShortType(), True),
                               StructField("custprofession", StringType(), True)])
-   gcs_df = spark.read.csv("gs://source1-weblog-bucket-we45/dataset/custs",mode='dropmalformed',schema=custstructtype1)
+   gcs_df = spark.read.csv("gs://inceptez-accnt/custs",mode='dropmalformed',schema=custstructtype1)
    gcs_df.show(10)
    print("GCS Read Completed Successfully")
-   gcs_df.write.mode("overwrite").partitionBy("custage").saveAsTable("default.cust_info_gcs")
+   gcs_df.write.mode("overwrite").partitionBy("custage").saveAsTable("default.cust_info_gcsu4")
    print("GCS to hive table load Completed Successfully")
 
    print("Hive to GCS usecase starts here")
-   gcs_df=spark.read.table("default.cust_info_gcs")
+   gcs_df=spark.read.table("default.cust_info_gcsu4")
    curts = spark.createDataFrame([1], IntegerType()).withColumn("curts", current_timestamp()).select(date_format(col("curts"), "yyyyMMddHHmmSS")).first()[0]
-   gcs_df.repartition(2).write.json("gs://source1-weblog-bucket-we45/dataset/cust_output_json_"+curts)
+   gcs_df.repartition(2).write.json("gs://wd34-vaish-usecase4/dataset/cust_output_json_"+curts)
    print("gcs Write Completed Successfully")
 
    print("Hive to GCS usecase starts here")
-   gcs_df=spark.read.table("default.cust_info_gcs")
+   gcs_df=spark.read.table("default.cust_info_gcsu4")
    curts = spark.createDataFrame([1], IntegerType()).withColumn("curts", current_timestamp()).select(date_format(col("curts"), "yyyyMMddHHmmSS")).first()[0]
    print(curts)
-   gcs_df.repartition(2).write.mode("overwrite").csv("gs://source1-weblog-bucket-we45/dataset/cust_csv")
+   gcs_df.repartition(2).write.mode("overwrite").csv("gs://wd34-vaish-usecase4/dataset/cust_csv"+curts)
    print("gcs Write Completed Successfully")
 
 main()
